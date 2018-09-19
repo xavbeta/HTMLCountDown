@@ -8,4 +8,6 @@ The `time` parameter has to be expressed in seconds, like ``` timer.html?time=90
 3. ***start/pause*** the countdown using the `spacebar`;
 4. type `r` to ***reset*** the countdown or just reload the webpage! 
 
+Please note that the font Digital-7 is freeware for home use only, freeware software (credit needed) and for your education process. 
+Use this [link](http://store.esellerate.net/s.aspx?s=STR0331655240) to buy the license ($24.95).
 
