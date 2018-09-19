@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="jquery.min.js"></script>
+
+
+<style>
+
+    @font-face {
+        font-family: 'digital-7-mono';
+        src:url('digital-7-mono.woff') format('woff'),
+            url('digital-7-mono.svg#digital-7') format('svg'),
+            url('digital-7-mono.eot'),
+            url('digital-7-mono.eot?#iefix') format('embedded-opentype'); 
+            font-weight: normal;
+            font-style: normal;
+    }
+
+    body{
+        font-family: 'digital-7-mono';
+        background: black;
+        color: white;
+    }
+
+    #aligner {
+        display: flex;
+        align-items: center;
+        min-height: calc(100vh - 200px);
+        justify-content: center;
+        font-size: 400pt;
+    }
+
+    #cd {
+        max-width: 90%;
+        text-align: center;
+        flex: 1;
+    }
+
+    .warn {
+        color:red;
+    }
+
+    .blink {
+        animation: blinker 1s linear infinite;
+    }
+
+    @keyframes blinker {
+        50% {
+            opacity: 0;
+        }
+    }
+
+
+</style>
+</head>
+<body>
+    <div id="aligner">
+        <div id="cd"></div>
+    </div>
+<script>
+
+
+$.urlParameter = function(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
+
+$.countdownActive=false;
+
+$.startCountdown = function(){
+    
+    $.countdownActive = true;
+
+    $.x = setInterval(function() {
+        
+        $.currentTime = $.currentTime - 1;
+        $.updateUI();
+   
+    }, 1000);
+}
+
+
+$.pauseCountdown = function(){
+    
+    $.countdownActive = false;
+
+    clearInterval($.x);
+
+}
+
+$.zeroFill = function(number) {
+    return String("00" + number).slice(-2);
+}
+
+$.updateUI = function(){
+    console.log($.currentTime);
+
+    $("#cd").removeClass("warn");
+    $("#cd").removeClass("blink");
+
+
+    if($.currentTime > 0 ) {
+        var minutes = Math.floor(($.currentTime % (60 * 60) / 60));
+        var seconds = Math.floor(($.currentTime % 60));
+
+        if($.currentTime < 10) {
+                console.log("add");
+            $("#cd").addClass("blink");
+
+        }
+
+        $("#cd").text((minutes > 0 ? $.zeroFill(minutes) + ":":"") + $.zeroFill(seconds));
+
+    } else {
+
+        $("#cd").text("+" + (-1) * $.currentTime).addClass("warn");
+        
+    }
+
+    
+}
+
+$(document).ready(function() {
+    $.time = $.urlParameter('time');
+    
+    if($.time){
+        $('#cd').text($.time);
+        $.currentTime = $.time;
+    }
+
+    $.updateUI();
+
+    $(document).keydown(function(event) {
+        
+        var managed = false;
+
+        switch ( event.which ) {
+            case 38: 
+                //up
+                managed = true;
+                break;
+            case 40: 
+                //up
+                managed = true;
+                break;
+            case 32:
+                //space
+                if ($.countdownActive){
+                    $.pauseCountdown();
+                } else {
+                    $.startCountdown();
+                }
+                managed = true;
+                break;
+            case 82:
+                //reset
+                if ($.countdownActive){
+                    $.pauseCountdown();
+                }
+                $.currentTime = $.time;
+                $.updateUI();
+                managed = true;
+                break;
+            
+        }
+
+        if(managed) {
+            event.preventDefault();
+        }
+    });
+
+
+});
+
+
+// Set the date we're counting down to
+var countDownDate = new Date("Jan 5, 2019 15:37:25").getTime();
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+    // Get todays date and time
+    var now = new Date().getTime();
+    
+    // Find the distance between now and the count down date
+    var distance = countDownDate - now;
+    
+    // Time calculations for days, hours, minutes and seconds
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    // If the count down is over, write some text 
+    if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("demo").innerHTML = "EXPIRED";
+    }
+}, 1000);
+</script>
+
+</body>
+</html>
